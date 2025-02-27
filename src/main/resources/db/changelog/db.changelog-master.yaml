@@ -1,0 +1,137 @@
+databaseChangeLog:
+  - logicalFilePath: db/changelog/db.changelog-master.yaml
+  - changeSet:
+      id: 1
+      author: evgeny_sharapov
+      changes:
+        - createTable:
+            tableName: address
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  remarks: "address id"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: building
+                  type: integer
+                  remarks: "address building"
+                  constraints:
+                    nullable: true
+              - column:
+                  name: street
+                  type: varchar(50)
+                  remarks: "address street"
+                  constraints:
+                    nullable: true
+              - column:
+                  name: city
+                  type: varchar(50)
+                  remarks: "address city"
+                  constraints:
+                    nullable: true
+              - column:
+                  name: region
+                  type: varchar(50)
+                  remarks: "address region"
+                  constraints:
+                    nullable: true
+
+        - insert:
+            tableName: address
+            columns:
+              - column:
+                  name: id
+                  valueComputed: gen_random_uuid()
+              - column:
+                  name: building
+                  value: 100  # передаём целое число, а не строку
+              - column:
+                  name: street
+                  value: "str"
+              - column:
+                  name: city
+                  value: "Moscow"
+              - column:
+                  name: region
+                  value: "Mosc"
+
+
+        - createTable:
+            tableName: attraction
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  remarks: "attraction id"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: name
+                  type: varchar(50)
+                  remarks: "attraction name"
+                  constraints:
+                    nullable: true
+              - column:
+                  name: description
+                  type: varchar(500)
+                  remarks: "attraction description"
+                  constraints:
+                    nullable: true
+
+
+        - insert:
+            tableName: attraction
+            columns:
+              - column:
+                  name: id
+                  valueComputed: gen_random_uuid()
+              - column:
+                  name: name
+                  value: "Zoo"
+              - column:
+                  name: description
+                  value: "Зоопарк"
+
+        - createTable:
+            tableName: attraction_service
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  remarks: "attraction_service id"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: name
+                  type: varchar(50)
+                  remarks: "attraction_service name"
+                  constraints:
+                    nullable: true
+              - column:
+                  name: description
+                  type: varchar(500)
+                  remarks: "attraction_service description"
+                  constraints:
+                    nullable: true
+
+
+        - insert:
+            tableName: attraction_service
+            columns:
+              - column:
+                  name: id
+                  valueComputed: gen_random_uuid()
+              - column:
+                  name: name
+                  value: "Coffee"
+              - column:
+                  name: description
+                  value: "Кофе"

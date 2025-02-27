@@ -108,12 +108,12 @@ databaseChangeLog:
                   value: "PARK"
 
         - createTable:
-            tableName: attraction_service
+            tableName: travel_service
             columns:
               - column:
                   name: id
                   type: UUID
-                  remarks: "attraction_service id"
+                  remarks: "travel_service id"
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -121,19 +121,25 @@ databaseChangeLog:
               - column:
                   name: name
                   type: varchar(50)
-                  remarks: "attraction_service name"
+                  remarks: "travel_service name"
                   constraints:
                     nullable: true
               - column:
                   name: description
                   type: varchar(500)
-                  remarks: "attraction_service description"
+                  remarks: "travel_service description"
+                  constraints:
+                    nullable: true
+              - column:
+                  name: type
+                  type: varchar(50)
+                  remarks: "travel_service type"
                   constraints:
                     nullable: true
 
 
         - insert:
-            tableName: attraction_service
+            tableName: travel_service
             columns:
               - column:
                   name: id
@@ -144,3 +150,6 @@ databaseChangeLog:
               - column:
                   name: description
                   value: "Кофе"
+              - column:
+                  name: type
+                  value: "TOUR_GUIDE"

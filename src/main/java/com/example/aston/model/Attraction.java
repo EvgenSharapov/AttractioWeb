@@ -19,7 +19,7 @@ public class Attraction {
     private UUID id;
     private String name;
     private String description;
-//    private String type;
+
 
     @Enumerated(EnumType.STRING)
     private AttractionType type;
@@ -33,7 +33,7 @@ public class Attraction {
 //            name = "attraction_service",
 //            joinColumns = @JoinColumn(name = "attraction_id",referencedColumnName = "attraction_id"),
 //            inverseJoinColumns = @JoinColumn(name = "service_id",referencedColumnName = "service_id"))
-//    private Set<AttractionService> services;
+//    private Set<TravelService> services;
 
 //    @OneToOne(mappedBy = "attraction")
 //    private TicketInfo ticket

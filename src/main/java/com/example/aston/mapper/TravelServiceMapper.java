@@ -10,16 +10,16 @@ import java.util.stream.Collectors;
 @Component
 public class TravelServiceMapper {
 
-    public TravelServiceRequestDTO mapToAttractionServiceRequestDTO(TravelService service) {
+    public TravelServiceRequestDTO mapToTravelServiceRequestDTO(TravelService service) {
         return TravelServiceRequestDTO.builder()
                 .name(service.getName())
                 .description(service.getDescription())
                 .type(service.getType())
                 .build();
     }
-    public List<TravelServiceRequestDTO> mapToAttractionServiceRequestDTO(List<TravelService> services) {
+    public List<TravelServiceRequestDTO> mapToTravelServiceRequestDTO(List<TravelService> services) {
         return services.stream()
-                .map(this::mapToAttractionServiceRequestDTO)
+                .map(this::mapToTravelServiceRequestDTO)
                 .collect(Collectors.toList());
     }
 }

@@ -21,24 +21,6 @@ public class TravelServiceServiceImpl implements TravelServiceService {
 
 
 
-    public List<TravelService> getAllTravelService() {
-        return serviceRepo.findAll();
-    }
-
-    public TravelService getTravelServiceById(UUID id) {
-        return serviceRepo.findById(id).orElseThrow(
-                ()->new RuntimeException("Travel Service not found by id: "+id));
-    }
-
-    public TravelService saveTravelService(TravelService service) {
-        return serviceRepo.save(service);
-    }
-
-    public void deleteTravelService(UUID id) {
-        serviceRepo.deleteById(id);
-    }
-
-
     @Override
     public TravelServiceRequestDTO findById(UUID id) {
         log.debug("Find Travel Service by id: {}", id);
@@ -46,7 +28,7 @@ public class TravelServiceServiceImpl implements TravelServiceService {
         TravelService service = serviceRepo.findById(id).orElseThrow(
                 () ->
                         new RuntimeException("Travel Service not found by id: " + id));
-        return serviceMapper.mapToAttractionServiceRequestDTO(service);
+        return serviceMapper.mapToTravelServiceRequestDTO(service);
     }
 
     @Override
@@ -55,14 +37,14 @@ public class TravelServiceServiceImpl implements TravelServiceService {
 
         List<TravelService> services = serviceRepo.findAll();
 
-        return serviceMapper.mapToAttractionServiceRequestDTO(services);
+        return serviceMapper.mapToTravelServiceRequestDTO(services);
     }
 
     @Override
     public TravelServiceRequestDTO save(TravelService service) {
         log.debug("Save Travel Service: {}",service);
         serviceRepo.save(service);
-        return serviceMapper.mapToAttractionServiceRequestDTO(service);
+        return serviceMapper.mapToTravelServiceRequestDTO(service);
     }
 
 

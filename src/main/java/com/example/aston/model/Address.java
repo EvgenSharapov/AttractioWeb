@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -21,7 +22,7 @@ public class Address {
     private String region;
 
 
-//
+
 //    @OneToMany(mappedBy = "address")
 //    private List<Attraction> attractions;
 

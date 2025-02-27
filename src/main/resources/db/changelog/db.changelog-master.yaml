@@ -83,6 +83,12 @@ databaseChangeLog:
                   remarks: "attraction description"
                   constraints:
                     nullable: true
+              - column:
+                  name: type
+                  type: varchar(50)
+                  remarks: "attraction type"
+                  constraints:
+                    nullable: true
 
 
         - insert:
@@ -97,6 +103,9 @@ databaseChangeLog:
               - column:
                   name: description
                   value: "Зоопарк"
+              - column:
+                  name: type
+                  value: "PARK"
 
         - createTable:
             tableName: attraction_service

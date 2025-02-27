@@ -1,4 +1,4 @@
-package com.example.aston.controller;
+package com.example.aston.controller.address;
 
 import com.example.aston.dto.AddressRequestDTO;
 import com.example.aston.model.Address;

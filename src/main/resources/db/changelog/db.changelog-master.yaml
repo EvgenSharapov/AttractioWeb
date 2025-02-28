@@ -8,9 +8,9 @@ databaseChangeLog:
             tableName: address
             columns:
               - column:
-                  name: id
+                  name: address_id
                   type: UUID
-                  remarks: "address id"
+                  remarks: "address address_id"
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -44,11 +44,11 @@ databaseChangeLog:
             tableName: address
             columns:
               - column:
-                  name: id
-                  valueComputed: gen_random_uuid()
+                  name: address_id
+                  value: "2f28e181-53eb-4a31-83f3-0e49f57f390e"
               - column:
                   name: building
-                  value: 100  # передаём целое число, а не строку
+                  value: 100
               - column:
                   name: street
                   value: "str"
@@ -64,13 +64,19 @@ databaseChangeLog:
             tableName: attraction
             columns:
               - column:
-                  name: id
+                  name: attraction_id
                   type: UUID
-                  remarks: "attraction id"
+                  remarks: "attraction attraction_id"
                   constraints:
                     primaryKey: true
                     nullable: false
-
+              - column:
+                  name: address_id
+                  type: UUID
+                  remarks: "attraction address_id"
+                  constraints:
+                    foreignKeyName: "fk_attraction_address"
+                    nullable: false
               - column:
                   name: name
                   type: varchar(50)
@@ -95,8 +101,12 @@ databaseChangeLog:
             tableName: attraction
             columns:
               - column:
-                  name: id
-                  valueComputed: gen_random_uuid()
+                  name: attraction_id
+                  value: "44f4c1be-f304-4f5f-b642-e408dc9d2299"
+              - column:
+                  name: address_id
+                  value: "2f28e181-53eb-4a31-83f3-0e49f57f390e"
+
               - column:
                   name: name
                   value: "Zoo"
@@ -111,9 +121,9 @@ databaseChangeLog:
             tableName: travel_service
             columns:
               - column:
-                  name: id
+                  name: travel_service_id
                   type: UUID
-                  remarks: "travel_service id"
+                  remarks: "travel_service travel_service_id"
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -142,8 +152,8 @@ databaseChangeLog:
             tableName: travel_service
             columns:
               - column:
-                  name: id
-                  valueComputed: gen_random_uuid()
+                  name: travel_service_id
+                  value: "124da179-8062-432d-8bc8-86b4b99cca6e"
               - column:
                   name: name
                   value: "Coffee"
@@ -153,3 +163,93 @@ databaseChangeLog:
               - column:
                   name: type
                   value: "TOUR_GUIDE"
+
+
+
+        - createTable:
+            tableName: ticket_info
+            columns:
+              - column:
+                  name: ticket_info_id
+                  type: UUID
+                  remarks: "ticket_info ticket_info_id"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: attraction_id
+                  type: UUID
+                  remarks: "ticket_info attraction_id"
+                  constraints:
+                    foreignKeyName: "fk_ticket_attraction"
+                    nullable: false
+              - column:
+                  name: price
+                  type: numeric
+                  remarks: "ticket_info price"
+                  constraints:
+                    nullable: true
+              - column:
+                  name: currency
+                  type: varchar(50)
+                  remarks: "ticket_info currency"
+                  constraints:
+                    nullable: true
+              - column:
+                  name: availability
+                  type: BOOLEAN
+                  remarks: "ticket_info availability"
+                  constraints:
+                    nullable: true
+
+
+        - insert:
+            tableName: ticket_info
+            columns:
+              - column:
+                  name: ticket_info_id
+                  value: "e38cc50d-4631-493e-ab47-098ff6b3a2b5"
+              - column:
+                  name: attraction_id
+                  value: "44f4c1be-f304-4f5f-b642-e408dc9d2299"
+
+              - column:
+                  name: price
+                  value: "300.2"
+              - column:
+                  name: currency
+                  value: "руб"
+              - column:
+                  name: availability
+                  value: "True"
+
+        - createTable:
+            tableName: attraction_travel_service
+            columns:
+              - column:
+                  name: attraction_id
+                  type: UUID
+                  remarks: "attraction_travel_service attraction_id"
+                  constraints:
+                    foreignKeyName: "fk_attraction_id"
+                    nullable: false
+
+              - column:
+                  name: travel_service_id
+                  type: UUID
+                  remarks: "attraction_travel_service travel_service_id"
+                  constraints:
+                    foreignKeyName: "fk_travel_service_id"
+                    nullable: false
+
+
+        - insert:
+            tableName: attraction_travel_service
+            columns:
+              - column:
+                  name: attraction_id
+                  value: "44f4c1be-f304-4f5f-b642-e408dc9d2299"
+              - column:
+                  name: travel_service_id
+                  value: "124da179-8062-432d-8bc8-86b4b99cca6e"
+

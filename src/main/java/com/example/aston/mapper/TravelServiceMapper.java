@@ -15,6 +15,7 @@ public class TravelServiceMapper {
                 .name(service.getName())
                 .description(service.getDescription())
                 .type(service.getType())
+                .attractions(service.getAttractions())
                 .build();
     }
     public List<TravelServiceRequestDTO> mapToTravelServiceRequestDTO(List<TravelService> services) {

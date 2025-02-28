@@ -9,8 +9,8 @@ import java.util.UUID;
 
 @Repository
 public interface AttractionRepository extends JpaRepository<Attraction, UUID> {
-//    List<Attraction> findByAddress_City(String city);
-//    List<Attraction> findByAddress_Region(String region);
-//    List<Attraction> findByServices_Name(String name);
-//    List<Attraction> findByNameContaining(String name);
+    List<Attraction> findByAddress_City(String city);
+    List<Attraction> findByAddress_Region(String region);
+    List<Attraction> findByServices_Name(String name);
+    List<Attraction> findByNameContaining(String name);
 }

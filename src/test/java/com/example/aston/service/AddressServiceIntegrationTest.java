@@ -53,7 +53,7 @@ public class AddressServiceIntegrationTest  extends TestContainerConfig{
 
 
     @Test
-    public void testFindById() {
+    public void findById_ShouldReturnAddressRequestDTO_WhenAddressExists() {
 
         Address address = createAddress();
         address = addressRepo.save(address);
@@ -67,7 +67,7 @@ public class AddressServiceIntegrationTest  extends TestContainerConfig{
     }
 
     @Test
-    public void testFindByIdNotFound() {
+    public void findById_ShouldThrowRuntimeException_WhenAddressDoesNotExist() {
         UUID id = UUID.randomUUID();
 
         Exception exception = assertThrows(RuntimeException.class, () -> addressService.findById(id));
@@ -75,7 +75,7 @@ public class AddressServiceIntegrationTest  extends TestContainerConfig{
     }
 
     @Test
-    public void testGetAll() {
+    public void getAll_ShouldReturnListOfAddressRequestDTO_WhenAddressExist() {
         Address address1 = createAddress();
         Address address2 = createAddress();
         addressRepo.saveAll(List.of(address1, address2));
@@ -89,7 +89,7 @@ public class AddressServiceIntegrationTest  extends TestContainerConfig{
     }
 
     @Test
-    public void testSave() {
+    public void save_ShouldReturnAddressRequestDTO_WhenAddressIsSaved() {
         Address address = createAddress();
 
         AddressRequestDTO result = addressService.save(address);
@@ -100,7 +100,7 @@ public class AddressServiceIntegrationTest  extends TestContainerConfig{
     }
 
     @Test
-    public void testDelete() {
+    public void delete_ShouldDeleteAddress_WhenAddressExists() {
         Address address = createAddress();
         address = addressRepo.save(address);
 

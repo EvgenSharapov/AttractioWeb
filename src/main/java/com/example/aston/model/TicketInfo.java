@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 
 import java.math.BigDecimal;
@@ -17,6 +18,8 @@ import java.util.UUID;
 public class TicketInfo {
     @Id
     @Column(name = "ticket_info_id")
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
     private BigDecimal price;
@@ -29,6 +32,6 @@ public class TicketInfo {
     private Attraction attraction;
 
     public TicketInfo() {
-        this.id = UUID.randomUUID();
+
     }
 }

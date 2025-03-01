@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 
 import java.util.Set;
@@ -17,6 +18,8 @@ import java.util.UUID;
 public class Attraction {
     @Id
     @Column(name = "attraction_id")
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
     private String name;
     @Column(columnDefinition = "TEXT")
@@ -40,7 +43,7 @@ public class Attraction {
             inverseJoinColumns = @JoinColumn(name = "travel_service_id",referencedColumnName = "travel_service_id"))
     private Set<TravelService> services;
 
-    @OneToOne(mappedBy = "attraction")
+    @OneToOne(mappedBy = "attraction",cascade = CascadeType.ALL, orphanRemoval = true)
     private TicketInfo ticket;
 
 

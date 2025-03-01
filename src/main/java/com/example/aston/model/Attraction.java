@@ -30,7 +30,7 @@ public class Attraction {
     private AttractionType type;
 
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JsonIgnore
     @JoinColumn(name = "address_id", foreignKey = @ForeignKey(name = "fk_attraction_address"))
     private Address address;
@@ -48,8 +48,5 @@ public class Attraction {
 
 
 
-    public Attraction() {
-        this.id = UUID.randomUUID();
 
-    }
 }

@@ -1,27 +1,50 @@
 package com.example.aston.service;
 
-import com.example.aston.dto.AddressRequestDTO;
 import com.example.aston.dto.TravelServiceRequestDTO;
 import com.example.aston.mapper.TravelServiceMapper;
-import com.example.aston.model.Address;
 import com.example.aston.model.ServiceType;
 import com.example.aston.model.TravelService;
 import com.example.aston.repository.TravelServiceRepository;
 import com.example.aston.service.travel_service.TravelServiceServiceImpl;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
-@Testcontainers
+
 @SpringBootTest
-class TravelServiceServiceTest {
+class TravelServiceServiceTest{
+
+    @Container
+    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:13")
+            .withDatabaseName("test_db")
+            .withUsername("test")
+            .withPassword("test");
+
+    @BeforeAll
+    static void startContainer() {
+        postgres.start();
+        System.out.println("Using database URL: " + postgres.getJdbcUrl());
+    }
+
+
+
+    @DynamicPropertySource
+    static void registerProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+    }
 
     private final TravelServiceRepository serviceRepo;
 

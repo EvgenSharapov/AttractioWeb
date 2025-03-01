@@ -8,6 +8,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -33,5 +34,21 @@ public class TicketInfo {
 
     public TicketInfo() {
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TicketInfo that = (TicketInfo) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(price, that.price) &&
+                Objects.equals(currency, that.currency) &&
+                Objects.equals(availability, that.availability);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, price, currency, availability);
     }
 }

@@ -5,22 +5,46 @@ import com.example.aston.mapper.AddressMapper;
 import com.example.aston.model.Address;
 import com.example.aston.repository.AddressRepository;
 import com.example.aston.service.address.AddressServiceImpl;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
 
 
 
-@Testcontainers
+
 @SpringBootTest
-public class AddressServiceIntegrationTest  extends TestContainerConfig{
+public class AddressServiceIntegrationTest {
+
+    @Container
+    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:13")
+            .withDatabaseName("test_db")
+            .withUsername("test")
+            .withPassword("test");
+
+    @BeforeAll
+    static void startContainer() {
+        postgres.start();
+        System.out.println("Using database URL: " + postgres.getJdbcUrl());
+    }
+
+
+
+    @DynamicPropertySource
+    static void registerProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+    }
+
 
     private final AddressRepository addressRepo;
     private final AddressMapper addressMapper;
@@ -34,6 +58,8 @@ public class AddressServiceIntegrationTest  extends TestContainerConfig{
         this.addressMapper = addressMapper;
         this.addressService = addressService;
     }
+
+
 
 
     @BeforeEach

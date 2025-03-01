@@ -1,6 +1,5 @@
 package com.example.aston.service;
 
-import com.example.aston.dto.AddressRequestDTO;
 import com.example.aston.dto.AttractionRequestDTO;
 import com.example.aston.mapper.AttractionMapper;
 import com.example.aston.model.Address;
@@ -8,33 +7,48 @@ import com.example.aston.model.Attraction;
 import com.example.aston.model.AttractionType;
 import com.example.aston.model.TicketInfo;
 import com.example.aston.repository.AttractionRepository;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import com.example.aston.service.attraction.AttractionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.util.TestPropertyValues;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
-@Testcontainers
+
 @SpringBootTest
-public class AttractionServiceIntegrationTest extends TestContainerConfig{
+public class AttractionServiceIntegrationTest{
 
+    @Container
+    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:13")
+            .withDatabaseName("test_db")
+            .withUsername("test")
+            .withPassword("test");
+
+    @BeforeAll
+    static void startContainer() {
+        postgres.start();
+        System.out.println("Using database URL: " + postgres.getJdbcUrl());
+    }
+
+
+
+    @DynamicPropertySource
+    static void registerProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+    }
 
     private final AttractionRepository attractionRepo;
 
@@ -52,13 +66,28 @@ public class AttractionServiceIntegrationTest extends TestContainerConfig{
         this.attractionService = attractionService;
     }
 
+    @BeforeEach
+    void setUp() {
+        attractionRepo.deleteAll();
+    }
+
 
     private TicketInfo createTicketInfo() {
         TicketInfo ticketInfo = new TicketInfo();
         ticketInfo.setPrice(new BigDecimal("303.6"));
         ticketInfo.setCurrency("руб");
         ticketInfo.setAvailability(true);
+
         return ticketInfo;
+    }
+
+    private Address createAddress(){
+        Address address = new Address();
+        address.setCity("Moscow");
+        address.setStreet("Test Street");
+        address.setBuilding(123);
+        return address;
+
     }
 
     private Attraction createAttraction() {
@@ -67,7 +96,11 @@ public class AttractionServiceIntegrationTest extends TestContainerConfig{
         attraction.setDescription("Test Description");
         attraction.setType(AttractionType.PARK);
 
+        Address address = createAddress();
+        attraction.setAddress(address);
+
         TicketInfo ticketInfo = createTicketInfo();
+        ticketInfo.setAttraction(attraction);
         attraction.setTicket(ticketInfo);
 
         return attraction;
@@ -75,7 +108,7 @@ public class AttractionServiceIntegrationTest extends TestContainerConfig{
 
 
     @Test
-    public void testFindById() {
+    public void findById_ShouldReturnAttractionRequestDTO_WhenAttractionExists() {
         Attraction attraction = createAttraction();
         attraction = attractionRepo.save(attraction);
 
@@ -84,11 +117,11 @@ public class AttractionServiceIntegrationTest extends TestContainerConfig{
         AttractionRequestDTO result = attractionService.findById(attraction.getId());
 
         assertNotNull(result);
-        assertEquals(expectedDTO, result);
+        assertThat(expectedDTO).isEqualToComparingFieldByField(result);
     }
 
     @Test
-    public void testFindByIdNotFound() {
+    public void findById_ShouldThrowRuntimeException_WhenAttractionDoesNotExist() {
         UUID id = UUID.randomUUID();
 
         Exception exception = assertThrows(RuntimeException.class, () -> attractionService.findById(id));
@@ -96,8 +129,10 @@ public class AttractionServiceIntegrationTest extends TestContainerConfig{
     }
 
     @Test
-    public void testGetAll() {
-        List<Attraction> attractions = List.of(createAttraction(), createAttraction());
+    public void getAll_ShouldReturnListOfAttractionRequestDTO_WhenAttractionExist() {
+        List<Attraction> attractions = List.of(createAttraction(), createAttraction(),createAttraction());
+
+        attractionRepo.saveAll(attractions);
 
         List<AttractionRequestDTO> expectedDTOs = attractionMapper.mapToAttractionRequestDTO(attractions);
         List<AttractionRequestDTO> result = attractionService.getAll();
@@ -108,28 +143,19 @@ public class AttractionServiceIntegrationTest extends TestContainerConfig{
     }
 
     @Test
-    public void testSave() {
+    public void save_ShouldReturnAttractionRequestDTO_WhenAttractionIsSaved() {
         Attraction attraction = createAttraction();
         attraction = attractionRepo.save(attraction);
 
-//        AttractionRequestDTO expectedDTO = attractionMapper.mapToAttractionRequestDTO(attraction);
-//        AttractionRequestDTO result = attractionService.save(attraction);
-//
-//        assertNotNull(result);
-//        assertEquals(attraction.getName(), result.name());
-//        assertEquals(attraction.getType(), result.type());
-//        assertEquals(attraction.getDescription(), result.description());
-//        assertEquals(attraction.getTicket(), result.ticketInfo());
+        AttractionRequestDTO expectedDTO = attractionMapper.mapToAttractionRequestDTO(attraction);
+        AttractionRequestDTO result = attractionService.save(attraction);
 
-//        assertThat(expectedDTO).isEqualToComparingFieldByField(result);
-//        assertThat(result).usingRecursiveComparison().isEqualTo(expectedDTO);
-
-//        verify(attractionRepo, times(1)).save(attraction);
-//        verify(attractionMapper, times(1)).mapToAttractionRequestDTO(attraction);
+        assertNotNull(result);
+        assertThat(expectedDTO).isEqualToComparingFieldByField(result);
     }
 
     @Test
-    public void testDelete() {
+    public void delete_ShouldDeleteAttraction_WhenAttractionExists() {
 
         Attraction attraction = createAttraction();
         attractionService.save(attraction);

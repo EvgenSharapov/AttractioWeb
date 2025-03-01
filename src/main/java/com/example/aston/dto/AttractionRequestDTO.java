@@ -11,6 +11,5 @@ public record AttractionRequestDTO (
         String description,
         AttractionType type,
         TicketInfo ticketInfo
-//        Address address
 ){
 }

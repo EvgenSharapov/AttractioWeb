@@ -9,10 +9,10 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 
 @Testcontainers
-public abstract class TestContainerConfig {
+public class TestContainerConfig {
 
     @Container
-    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:13")
+    protected static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:13")
             .withDatabaseName("test_db")
             .withUsername("test")
             .withPassword("test");
@@ -22,6 +22,8 @@ public abstract class TestContainerConfig {
         postgres.start();
         System.out.println("Using database URL: " + postgres.getJdbcUrl());
     }
+
+
 
     @DynamicPropertySource
     static void registerProperties(DynamicPropertyRegistry registry) {

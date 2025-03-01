@@ -10,7 +10,7 @@ public record AttractionRequestDTO (
         String name,
         String description,
         AttractionType type,
-        TicketInfo ticketInfo,
-        Address address
+        TicketInfo ticketInfo
+//        Address address
 ){
 }

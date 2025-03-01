@@ -2,8 +2,10 @@ package com.example.aston.service;
 
 import com.example.aston.dto.AttractionRequestDTO;
 import com.example.aston.mapper.AttractionMapper;
+import com.example.aston.model.Address;
 import com.example.aston.model.Attraction;
 import com.example.aston.model.AttractionType;
+import com.example.aston.model.TicketInfo;
 import com.example.aston.repository.AttractionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import com.example.aston.service.attraction.AttractionServiceImpl;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,11 +34,29 @@ public class AttractionServiceTest {
     @InjectMocks
     private AttractionServiceImpl attractionService;
 
+    // Метод для создания TicketInfo
+    private TicketInfo createTicketInfo() {
+        TicketInfo ticketInfo = new TicketInfo();
+        ticketInfo.setPrice(new BigDecimal("303.6"));
+        ticketInfo.setCurrency("руб");
+        ticketInfo.setAvailability(true);
+        return ticketInfo;
+    }
+
+
     @Test
     public void testFindById() {
         UUID id = UUID.randomUUID();
         Attraction attraction = new Attraction();
-        AttractionRequestDTO expectedDTO = new AttractionRequestDTO("Test Attraction", "Test Description", AttractionType.PARK);
+
+        TicketInfo ticketInfo = createTicketInfo();
+
+        AttractionRequestDTO expectedDTO = new AttractionRequestDTO(
+                "Test Attraction",
+                "Test Description",
+                AttractionType.PARK,
+                ticketInfo
+        );
 
         when(attractionRepo.findById(id)).thenReturn(Optional.of(attraction));
         when(attractionMapper.mapToAttractionRequestDTO(attraction)).thenReturn(expectedDTO);
@@ -61,9 +82,12 @@ public class AttractionServiceTest {
     @Test
     public void testGetAll() {
         List<Attraction> attractions = List.of(new Attraction(), new Attraction());
+
+        TicketInfo ticketInfo = createTicketInfo();
+
         List<AttractionRequestDTO> expectedDTOs = List.of(
-                new AttractionRequestDTO("Attraction 1", "Description 1",AttractionType.PARK),
-                new AttractionRequestDTO("Attraction 2", "Description 2",AttractionType.GALLERY)
+                new AttractionRequestDTO("Attraction 1", "Description 1", AttractionType.PARK, ticketInfo),
+                new AttractionRequestDTO("Attraction 2", "Description 2", AttractionType.GALLERY, ticketInfo)
         );
 
         when(attractionRepo.findAll()).thenReturn(attractions);
@@ -80,7 +104,15 @@ public class AttractionServiceTest {
     @Test
     public void testSave() {
         Attraction attraction = new Attraction();
-        AttractionRequestDTO expectedDTO = new AttractionRequestDTO("Test Attraction", "Test Description",AttractionType.PARK);
+
+        TicketInfo ticketInfo = createTicketInfo();
+
+        AttractionRequestDTO expectedDTO = new AttractionRequestDTO(
+                "Test Attraction",
+                "Test Description",
+                AttractionType.PARK,
+                ticketInfo
+        );
 
         when(attractionRepo.save(attraction)).thenReturn(attraction);
         when(attractionMapper.mapToAttractionRequestDTO(attraction)).thenReturn(expectedDTO);

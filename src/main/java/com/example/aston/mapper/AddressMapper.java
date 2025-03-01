@@ -16,7 +16,6 @@ public class AddressMapper {
                 .street(address.getStreet())
                 .city(address.getCity())
                 .region(address.getRegion())
-                .attractionList(address.getAttractions())
                 .build();
     }
 

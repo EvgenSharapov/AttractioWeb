@@ -2,6 +2,7 @@ package com.example.aston.service;
 
 import com.example.aston.dto.TravelServiceRequestDTO;
 import com.example.aston.mapper.TravelServiceMapper;
+import com.example.aston.model.Attraction;
 import com.example.aston.model.TravelService;
 import com.example.aston.model.ServiceType;
 import com.example.aston.repository.TravelServiceRepository;
@@ -14,10 +15,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -44,6 +42,7 @@ class TravelServiceServiceTest {
 
         uuid = UUID.randomUUID();
         travelServiceEntity = new TravelService();
+
         travelServiceRequestDTO = new TravelServiceRequestDTO("Test name","Test Description", ServiceType.RENTAL_SERVICE);
 
         when(serviceMapper.mapToTravelServiceRequestDTO(travelServiceEntity)).thenReturn(travelServiceRequestDTO);

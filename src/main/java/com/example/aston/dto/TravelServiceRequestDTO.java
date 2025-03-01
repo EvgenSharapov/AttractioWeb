@@ -10,7 +10,7 @@ import java.util.Set;
 public record TravelServiceRequestDTO (
         String name,
         String description,
-        ServiceType type,
-        Set<Attraction> attractions
+        ServiceType type
+//        Set<Attraction> attractions
 ){
 }

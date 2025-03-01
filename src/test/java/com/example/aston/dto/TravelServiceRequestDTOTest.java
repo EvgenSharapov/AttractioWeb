@@ -1,8 +1,8 @@
 package com.example.aston.dto;
 
-import com.example.aston.model.AttractionType;
 import com.example.aston.model.ServiceType;
 import org.junit.jupiter.api.Test;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

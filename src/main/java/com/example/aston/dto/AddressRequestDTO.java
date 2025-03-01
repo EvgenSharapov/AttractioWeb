@@ -12,7 +12,7 @@ public record AddressRequestDTO (
         Integer building,
         String street,
         String city,
-        String region,
-        Set<Attraction> attractionList
+        String region
+//        Set<Attraction> attractionList
 ){
 }

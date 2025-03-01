@@ -16,7 +16,6 @@ public class AttractionMapper {
                 .description(attraction.getDescription())
                 .type(attraction.getType())
                 .ticketInfo(attraction.getTicket())
-                .address(attraction.getAddress())
                 .build();
     }
 

@@ -5,60 +5,40 @@ import com.example.aston.mapper.AddressMapper;
 import com.example.aston.model.Address;
 import com.example.aston.repository.AddressRepository;
 import com.example.aston.service.address.AddressServiceImpl;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.util.TestPropertyValues;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 
 
 @Testcontainers
 @SpringBootTest
-@RequiredArgsConstructor
-@ContextConfiguration(initializers = AddressServiceIntegrationTest.Initializer.class)
-public class AddressServiceIntegrationTest {
+public class AddressServiceIntegrationTest  extends TestContainerConfig{
 
-    @Container
-    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:13")
-            .withDatabaseName("test_db")
-            .withUsername("test")
-            .withPassword("test");
+    private final AddressRepository addressRepo;
+    private final AddressMapper addressMapper;
+    private final AddressServiceImpl addressService;
 
-    static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-        @Override
-        public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
-            TestPropertyValues.of(
-                    "spring.datasource.url=" + postgres.getJdbcUrl(),
-                    "spring.datasource.username=" + postgres.getUsername(),
-                    "spring.datasource.password=" + postgres.getPassword()
-            ).applyTo(configurableApplicationContext.getEnvironment());
-        }
+    @Autowired
+    public AddressServiceIntegrationTest(AddressRepository addressRepo,
+                                         AddressMapper addressMapper,
+                                         AddressServiceImpl addressService) {
+        this.addressRepo = addressRepo;
+        this.addressMapper = addressMapper;
+        this.addressService = addressService;
     }
 
-    @MockBean
-    private AddressRepository addressRepo;
-
-    @MockBean
-    private AddressMapper addressMapper;
-
-    private AddressServiceImpl addressService;
 
     @BeforeEach
     void setUp() {
-        addressService = new AddressServiceImpl(addressRepo, addressMapper);
+
         addressRepo.deleteAll();
     }
 
@@ -71,85 +51,61 @@ public class AddressServiceIntegrationTest {
         return address;
     }
 
-    private AddressRequestDTO createAddressRequestDTO() {
-        return AddressRequestDTO.builder()
-                .building(745)
-                .street("Angarsk street")
-                .city("Moscow")
-                .region("Moscow region")
-                .build();
-    }
 
     @Test
     public void testFindById() {
-        UUID id = UUID.randomUUID();
+
         Address address = createAddress();
-        AddressRequestDTO expectedDTO = createAddressRequestDTO();
+        address = addressRepo.save(address);
 
-        when(addressRepo.findById(id)).thenReturn(Optional.of(address));
-        when(addressMapper.mapToAddressRequestDTO(address)).thenReturn(expectedDTO);
+        AddressRequestDTO expectedDTO = addressMapper.mapToAddressRequestDTO(address);
 
-        AddressRequestDTO result = addressService.findById(id);
+        AddressRequestDTO result = addressService.findById(address.getId());
 
         assertNotNull(result);
         assertEquals(expectedDTO, result);
-        verify(addressRepo, times(1)).findById(id);
-        verify(addressMapper, times(1)).mapToAddressRequestDTO(address);
     }
 
     @Test
     public void testFindByIdNotFound() {
         UUID id = UUID.randomUUID();
 
-        when(addressRepo.findById(id)).thenReturn(Optional.empty());
-
-        assertThrows(RuntimeException.class, () -> addressService.findById(id));
-        verify(addressRepo, times(1)).findById(id);
+        Exception exception = assertThrows(RuntimeException.class, () -> addressService.findById(id));
+        assertEquals("Address not found by id: " + id, exception.getMessage());
     }
 
     @Test
     public void testGetAll() {
-        List<Address> addresses = List.of(createAddress(), createAddress());
-        List<AddressRequestDTO> expectedDTOs = List.of(createAddressRequestDTO(), createAddressRequestDTO());
+        Address address1 = createAddress();
+        Address address2 = createAddress();
+        addressRepo.saveAll(List.of(address1, address2));
 
-        when(addressRepo.findAll()).thenReturn(addresses);
-        when(addressMapper.mapToAddressRequestDTO(addresses)).thenReturn(expectedDTOs);
+        List<AddressRequestDTO> expectedDTOs = addressMapper.mapToAddressRequestDTO(List.of(address1, address2));
 
         List<AddressRequestDTO> result = addressService.getAll();
 
         assertNotNull(result);
         assertEquals(expectedDTOs.size(), result.size());
-        verify(addressRepo, times(1)).findAll();
-        verify(addressMapper, times(1)).mapToAddressRequestDTO(addresses);
     }
 
     @Test
     public void testSave() {
         Address address = createAddress();
-        AddressRequestDTO expectedDTO = createAddressRequestDTO();
-
-        when(addressRepo.save(address)).thenReturn(address);
-        when(addressMapper.mapToAddressRequestDTO(address)).thenReturn(expectedDTO);
 
         AddressRequestDTO result = addressService.save(address);
 
         assertNotNull(result);
-        assertEquals(expectedDTO, result);
-        verify(addressRepo, times(1)).save(address);
-        verify(addressMapper, times(1)).mapToAddressRequestDTO(address);
+        assertEquals(address.getStreet(), result.street());
+        assertEquals(address.getCity(), result.city());
     }
 
     @Test
     public void testDelete() {
         Address address = createAddress();
-
-        when(addressRepo.save(address)).thenReturn(address);
-
         address = addressRepo.save(address);
-        UUID id = address.getId();
 
-        addressService.delete(id);
+        addressService.delete(address.getId());
 
-        verify(addressRepo, times(1)).deleteById(id);
+        assertFalse(addressRepo.findById(address.getId()).isPresent());
     }
 }

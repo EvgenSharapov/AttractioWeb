@@ -2,17 +2,22 @@ package com.example.aston.service;
 
 import com.example.aston.dto.AttractionRequestDTO;
 import com.example.aston.mapper.AttractionMapper;
-import com.example.aston.model.Address;
 import com.example.aston.model.Attraction;
 import com.example.aston.model.AttractionType;
 import com.example.aston.model.TicketInfo;
 import com.example.aston.repository.AttractionRepository;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import com.example.aston.service.attraction.AttractionServiceImpl;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.util.TestPropertyValues;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -22,8 +27,27 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-public class AttractionServiceTest {
+@Testcontainers
+@SpringBootTest
+@ContextConfiguration(initializers = AttractionServiceIntegrationTest.Initializer.class)
+public class AttractionServiceIntegrationTest {
+
+    @Container
+    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:13")
+            .withDatabaseName("test_db")
+            .withUsername("test")
+            .withPassword("test");
+
+    static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+        @Override
+        public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
+            TestPropertyValues.of(
+                    "spring.datasource.url=" + postgres.getJdbcUrl(),
+                    "spring.datasource.username=" + postgres.getUsername(),
+                    "spring.datasource.password=" + postgres.getPassword()
+            ).applyTo(configurableApplicationContext.getEnvironment());
+        }
+    }
 
     @Mock
     private AttractionRepository attractionRepo;
@@ -41,6 +65,15 @@ public class AttractionServiceTest {
         ticketInfo.setCurrency("руб");
         ticketInfo.setAvailability(true);
         return ticketInfo;
+    }
+
+    private Attraction createAttraction() {
+        Attraction attraction = new Attraction();
+        attraction.setName("Test Attraction");
+        attraction.setDescription("Test Description");
+        attraction.setType(AttractionType.PARK);
+        attraction.setTicket(createTicketInfo());
+        return attraction;
     }
 
 

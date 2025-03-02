@@ -4,6 +4,7 @@ import com.example.aston.dto.AddressRequestDTO;
 import com.example.aston.model.Address;
 import com.example.aston.service.address.AddressServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class AddressControllerImpl implements AddressController{
     }
 
     @Override
+    @ResponseStatus(HttpStatus.CREATED)
     public AddressRequestDTO createAddress(@RequestBody Address address) {
         return addressService.save(address);
     }
@@ -38,6 +40,7 @@ public class AddressControllerImpl implements AddressController{
     }
 
     @Override
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAddress(@PathVariable UUID id) {
         addressService.delete(id);
     }

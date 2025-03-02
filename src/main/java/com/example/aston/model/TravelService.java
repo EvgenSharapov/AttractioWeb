@@ -2,7 +2,6 @@ package com.example.aston.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -31,14 +30,12 @@ public class TravelService {
     private String name;
 
     @NotBlank(message = "Description cannot be blank")
-    @Size(max = 1000, message = "Description must be less than 1000 characters")
     private String description;
 
     @NotNull(message = "The type must be selected")
     @Enumerated(EnumType.STRING)
     private ServiceType type;
 
-    @Valid
     @ManyToMany
     @JsonIgnore
     @JoinTable(name = "attraction_travel_service",
@@ -48,7 +45,6 @@ public class TravelService {
 
 
     public TravelService() {
-        this.id = UUID.randomUUID();
 
     }
 

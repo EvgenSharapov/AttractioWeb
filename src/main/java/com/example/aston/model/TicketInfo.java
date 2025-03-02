@@ -26,9 +26,8 @@ public class TicketInfo {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
-    @NotBlank(message = "Price cannot be blank")
     @DecimalMin(value = "0.0", inclusive = true, message = "Price must be greater than or equal to 0")
-    @Digits(integer = 10, fraction = 2, message = "Price must have up to 10 integer digits and 2 fraction digits")
+    @Digits(integer = 1000000, fraction = 2, message = "Price must have up to 10 integer digits and 2 fraction digits")
     private BigDecimal price;
 
     @NotBlank(message = "Currency cannot be blank")
@@ -38,7 +37,7 @@ public class TicketInfo {
     @NotNull(message = "The availability must be selected")
     private Boolean availability;
 
-    @Valid
+
     @OneToOne
     @JsonIgnore
     @JoinColumn(name = "attraction_id",foreignKey = @ForeignKey(name = "fk_ticket_attraction"))

@@ -1,6 +1,7 @@
 package com.example.aston.service;
 
 import com.example.aston.dto.TravelServiceRequestDTO;
+import com.example.aston.handler.exeptions.TravelServiceNotFoundException;
 import com.example.aston.mapper.TravelServiceMapper;
 import com.example.aston.model.ServiceType;
 import com.example.aston.model.TravelService;
@@ -94,7 +95,7 @@ class TravelServiceServiceTest{
     void findById_ShouldThrowRuntimeException_WhenServiceDoesNotExist() {
         UUID id = UUID.randomUUID();
 
-        Exception exception = assertThrows(RuntimeException.class, () -> travelService.findById(id));
+        Exception exception = assertThrows(TravelServiceNotFoundException.class, () -> travelService.findById(id));
         assertEquals("Travel Service not found by id: " + id, exception.getMessage());
 
     }

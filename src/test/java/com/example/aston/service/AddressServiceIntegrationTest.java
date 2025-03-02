@@ -1,6 +1,7 @@
 package com.example.aston.service;
 
 import com.example.aston.dto.AddressRequestDTO;
+import com.example.aston.handler.exeptions.AddressNotFoundException;
 import com.example.aston.mapper.AddressMapper;
 import com.example.aston.model.Address;
 import com.example.aston.repository.AddressRepository;
@@ -96,7 +97,7 @@ public class AddressServiceIntegrationTest {
     public void findById_ShouldThrowRuntimeException_WhenAddressDoesNotExist() {
         UUID id = UUID.randomUUID();
 
-        Exception exception = assertThrows(RuntimeException.class, () -> addressService.findById(id));
+        Exception exception = assertThrows(AddressNotFoundException.class, () -> addressService.findById(id));
         assertEquals("Address not found by id: " + id, exception.getMessage());
     }
 

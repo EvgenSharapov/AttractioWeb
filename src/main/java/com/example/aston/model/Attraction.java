@@ -45,7 +45,6 @@ public class Attraction {
     @JoinColumn(name = "address_id", foreignKey = @ForeignKey(name = "fk_attraction_address"))
     private Address address;
 
-    @NotEmpty(message = "Services cannot be empty")
     @ManyToMany
     @JsonIgnore
     @JoinTable(
@@ -54,11 +53,9 @@ public class Attraction {
             inverseJoinColumns = @JoinColumn(name = "travel_service_id",referencedColumnName = "travel_service_id"))
     private Set<TravelService> services;
 
-    @Valid
     @OneToOne(mappedBy = "attraction",cascade = CascadeType.ALL, orphanRemoval = true)
     private TicketInfo ticket;
 
-
-
-
+    public Attraction() {
+    }
 }

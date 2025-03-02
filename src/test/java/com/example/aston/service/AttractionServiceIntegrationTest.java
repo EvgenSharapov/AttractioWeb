@@ -1,6 +1,7 @@
 package com.example.aston.service;
 
 import com.example.aston.dto.AttractionRequestDTO;
+import com.example.aston.handler.exeptions.AttractionNotFoundException;
 import com.example.aston.mapper.AttractionMapper;
 import com.example.aston.model.Address;
 import com.example.aston.model.Attraction;
@@ -85,6 +86,7 @@ public class AttractionServiceIntegrationTest{
         Address address = new Address();
         address.setCity("Moscow");
         address.setStreet("Test Street");
+        address.setRegion("Moscow reg");
         address.setBuilding(123);
         return address;
 
@@ -124,7 +126,7 @@ public class AttractionServiceIntegrationTest{
     public void findById_ShouldThrowRuntimeException_WhenAttractionDoesNotExist() {
         UUID id = UUID.randomUUID();
 
-        Exception exception = assertThrows(RuntimeException.class, () -> attractionService.findById(id));
+        Exception exception = assertThrows(AttractionNotFoundException.class, () -> attractionService.findById(id));
         assertEquals("Attraction not found by id: " + id, exception.getMessage());
     }
 

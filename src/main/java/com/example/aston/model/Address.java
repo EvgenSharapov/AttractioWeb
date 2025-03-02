@@ -26,9 +26,8 @@ public class Address {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
-    @NotBlank(message = "Building cannot be blank")
+    @Digits(integer = 10000, fraction = 0, message = "Building must be an integer")
     @Min(value = 1, message = "Building must be at least 1")
-    @Max(value = 10000, message = "Building must be at most 10000")
     private Integer building;
 
     @NotBlank(message = "Street cannot be blank")
@@ -43,7 +42,6 @@ public class Address {
     @Size(max = 100, message = "Region must be less than 100 characters")
     private String region;
 
-    @Valid
     @OneToMany(mappedBy = "address")
     @JsonIgnore
     private Set<Attraction> attractions;

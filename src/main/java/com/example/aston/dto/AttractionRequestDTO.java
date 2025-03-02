@@ -5,11 +5,11 @@ import com.example.aston.model.AttractionType;
 import com.example.aston.model.TicketInfo;
 import lombok.Builder;
 
-@Builder
-public record AttractionRequestDTO (
-        String name,
-        String description,
-        AttractionType type,
-        TicketInfo ticketInfo
-){
-}
+    @Builder
+    public record AttractionRequestDTO (
+            String name,
+            String description,
+            AttractionType type,
+            TicketInfo ticketInfo
+    ){
+    }

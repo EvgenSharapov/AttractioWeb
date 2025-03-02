@@ -4,6 +4,8 @@ import com.example.aston.dto.AttractionRequestDTO;
 import com.example.aston.model.Attraction;
 import com.example.aston.service.attraction.AttractionServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -33,7 +35,7 @@ public class AttractionControllerImpl implements AttractionController {
     }
 
     @Override
-    public AttractionRequestDTO updateAttraction(UUID id, Attraction attraction) {
+    public AttractionRequestDTO updateAttraction(UUID id,Attraction attraction) {
         attraction.setId(id);
         return attractionService.save(attraction);
     }
@@ -43,4 +45,26 @@ public class AttractionControllerImpl implements AttractionController {
         attractionService.delete(id);
 
     }
+
+    @Override
+    public List<AttractionRequestDTO> findByCity(String city) {
+        return attractionService.findByCity(city);
+    }
+
+    @Override
+    public List<AttractionRequestDTO> findByRegion(String region) {
+        return attractionService.findByRegion(region);
+    }
+
+    @Override
+    public List<AttractionRequestDTO> findByServiceName(String serviceName) {
+        return attractionService.findByServiceName(serviceName);
+    }
+
+    @Override
+    public List<AttractionRequestDTO> findByNameContaining(String name) {
+        return attractionService.findByNameContaining(name);
+    }
+
+
 }

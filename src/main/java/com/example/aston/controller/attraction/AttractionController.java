@@ -24,4 +24,16 @@ public interface AttractionController {
 
     @DeleteMapping("/{id}")
     void deleteAttraction(@PathVariable UUID id);
+
+    @GetMapping("/city/{city}")
+    List<AttractionRequestDTO> findByCity(@PathVariable String city);
+
+    @GetMapping("/region/{region}")
+    List<AttractionRequestDTO> findByRegion(@PathVariable String region);
+
+    @GetMapping("/service/{serviceName}")
+    List<AttractionRequestDTO> findByServiceName(@PathVariable String serviceName);
+
+    @GetMapping("/name/{name}")
+    List<AttractionRequestDTO> findByNameContaining(@PathVariable String name);
 }

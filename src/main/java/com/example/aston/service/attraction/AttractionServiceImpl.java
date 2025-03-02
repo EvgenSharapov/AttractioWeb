@@ -1,10 +1,11 @@
 package com.example.aston.service.attraction;
 
 import com.example.aston.dto.AttractionRequestDTO;
+import com.example.aston.handler.exeptions.AttractionNotFoundException;
 import com.example.aston.mapper.AttractionMapper;
-import com.example.aston.model.Address;
 import com.example.aston.model.Attraction;
 import com.example.aston.repository.AttractionRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,8 +27,7 @@ public class AttractionServiceImpl implements AttractionService {
         log.debug("Find Attraction by id: {}", id);
 
         Attraction attraction = attractionRepo.findById(id).orElseThrow(
-                () ->
-                        new RuntimeException("Attraction not found by id: " + id));
+                () -> new AttractionNotFoundException(id));
 
         return attractionMapper.mapToAttractionRequestDTO(attraction);
     }
@@ -42,7 +42,7 @@ public class AttractionServiceImpl implements AttractionService {
     }
 
     @Override
-    public AttractionRequestDTO save(Attraction attraction) {
+    public AttractionRequestDTO save(@Valid Attraction attraction) {
         log.debug("Save Attraction: {}", attraction);
         attractionRepo.save(attraction);
 

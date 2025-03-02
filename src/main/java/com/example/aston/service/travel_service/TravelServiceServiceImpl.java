@@ -1,9 +1,11 @@
 package com.example.aston.service.travel_service;
 
 import com.example.aston.dto.TravelServiceRequestDTO;
+import com.example.aston.handler.exeptions.TravelServiceNotFoundException;
 import com.example.aston.mapper.TravelServiceMapper;
 import com.example.aston.model.TravelService;
 import com.example.aston.repository.TravelServiceRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,8 +28,7 @@ public class TravelServiceServiceImpl implements TravelServiceService {
         log.debug("Find Travel Service by id: {}", id);
 
         TravelService service = serviceRepo.findById(id).orElseThrow(
-                () ->
-                        new RuntimeException("Travel Service not found by id: " + id));
+                () -> new TravelServiceNotFoundException(id));
         return serviceMapper.mapToTravelServiceRequestDTO(service);
     }
 
@@ -41,7 +42,7 @@ public class TravelServiceServiceImpl implements TravelServiceService {
     }
 
     @Override
-    public TravelServiceRequestDTO save(TravelService service) {
+    public TravelServiceRequestDTO save(@Valid TravelService service) {
         log.debug("Save Travel Service: {}",service);
         serviceRepo.save(service);
         return serviceMapper.mapToTravelServiceRequestDTO(service);

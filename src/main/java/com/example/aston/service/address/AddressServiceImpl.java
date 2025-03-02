@@ -1,9 +1,11 @@
 package com.example.aston.service.address;
 
 import com.example.aston.dto.AddressRequestDTO;
+import com.example.aston.handler.exeptions.AddressNotFoundException;
 import com.example.aston.mapper.AddressMapper;
 import com.example.aston.model.Address;
 import com.example.aston.repository.AddressRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,8 +27,7 @@ public class AddressServiceImpl implements AddressService{
         log.debug("Find Address by id: {}", id);
 
         Address address = addressRepo.findById(id).orElseThrow(
-                () ->
-                        new RuntimeException("Address not found by id: " + id));
+                () -> new AddressNotFoundException(id));
         return addressMapper.mapToAddressRequestDTO(address);
 
     }
@@ -42,7 +43,7 @@ public class AddressServiceImpl implements AddressService{
     }
 
     @Override
-    public AddressRequestDTO save(Address address) {
+    public AddressRequestDTO save(@Valid Address address) {
         log.debug("Save Address: {}",address);
         addressRepo.save(address);
 

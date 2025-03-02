@@ -2,6 +2,9 @@ package com.example.aston.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -23,10 +26,19 @@ public class TicketInfo {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
+    @NotBlank(message = "Price cannot be blank")
+    @DecimalMin(value = "0.0", inclusive = true, message = "Price must be greater than or equal to 0")
+    @Digits(integer = 10, fraction = 2, message = "Price must have up to 10 integer digits and 2 fraction digits")
     private BigDecimal price;
+
+    @NotBlank(message = "Currency cannot be blank")
+    @Size(min = 3, max = 3, message = "Currency must be exactly 3 characters")
     private String currency;
+
+    @NotNull(message = "The availability must be selected")
     private Boolean availability;
 
+    @Valid
     @OneToOne
     @JsonIgnore
     @JoinColumn(name = "attraction_id",foreignKey = @ForeignKey(name = "fk_ticket_attraction"))

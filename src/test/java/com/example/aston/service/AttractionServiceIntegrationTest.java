@@ -109,9 +109,12 @@ public class AttractionServiceIntegrationTest{
     }
 
 
+
     @Test
     public void findById_ShouldReturnAttractionRequestDTO_WhenAttractionExists() {
         Attraction attraction = createAttraction();
+        Address address = createAddress();
+        attraction.setAddress(address);
         attraction = attractionRepo.save(attraction);
 
         AttractionRequestDTO expectedDTO = attractionMapper.mapToAttractionRequestDTO(attraction);
@@ -148,9 +151,10 @@ public class AttractionServiceIntegrationTest{
     public void save_ShouldReturnAttractionRequestDTO_WhenAttractionIsSaved() {
         Attraction attraction = createAttraction();
         attraction = attractionRepo.save(attraction);
+        Address address = createAddress();
 
         AttractionRequestDTO expectedDTO = attractionMapper.mapToAttractionRequestDTO(attraction);
-        AttractionRequestDTO result = attractionService.save(attraction);
+        AttractionRequestDTO result = attractionService.save(attraction,address);
 
         assertNotNull(result);
         assertThat(expectedDTO).isEqualToComparingFieldByField(result);
@@ -158,9 +162,9 @@ public class AttractionServiceIntegrationTest{
 
     @Test
     public void delete_ShouldDeleteAttraction_WhenAttractionExists() {
-
+        Address address = createAddress();
         Attraction attraction = createAttraction();
-        attractionService.save(attraction);
+        attractionService.save(attraction,address);
 
         attractionService.delete(attraction.getId());
 

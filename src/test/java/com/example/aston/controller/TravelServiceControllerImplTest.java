@@ -1,5 +1,6 @@
 package com.example.aston.controller;
 
+import com.example.aston.controller.attraction.AttractionControllerImpl;
 import com.example.aston.controller.travel_service.TravelServiceControllerImpl;
 import com.example.aston.dto.TravelServiceRequestDTO;
 import com.example.aston.model.ServiceType;
@@ -8,10 +9,16 @@ import com.example.aston.service.travel_service.TravelServiceServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -24,23 +31,20 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
+@WebMvcTest(controllers = TravelServiceControllerImpl.class)
 class TravelServiceControllerImplTest {
 
+    @Autowired
     private MockMvc mockMvc;
 
-    @Mock
+    @MockitoBean
     private TravelServiceServiceImpl travelService;
 
-    @InjectMocks
-    private TravelServiceControllerImpl travelServiceController;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(travelServiceController).build();
-    }
 
     private TravelServiceRequestDTO createTravelServiceRequestDTO() {
         return TravelServiceRequestDTO.builder()
@@ -75,6 +79,8 @@ class TravelServiceControllerImplTest {
         verify(travelService, times(1)).getAll();
     }
 
+
+
     @Test
     void getTravelServiceById_ReturnsService() throws Exception {
         UUID id = UUID.randomUUID();
@@ -90,6 +96,7 @@ class TravelServiceControllerImplTest {
 
         verify(travelService, times(1)).findById(id);
     }
+
 
     @Test
     void createTravelService_ReturnsCreatedService() throws Exception {

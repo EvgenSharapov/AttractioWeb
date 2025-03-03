@@ -3,6 +3,7 @@ package com.example.aston.controller.address;
 import com.example.aston.dto.AddressRequestDTO;
 import com.example.aston.model.Address;
 import com.example.aston.service.address.AddressServiceImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -29,12 +30,12 @@ public class AddressControllerImpl implements AddressController{
 
     @Override
     @ResponseStatus(HttpStatus.CREATED)
-    public AddressRequestDTO createAddress(@RequestBody Address address) {
+    public AddressRequestDTO createAddress(@Valid @RequestBody Address address) {
         return addressService.save(address);
     }
 
     @Override
-    public AddressRequestDTO updateAddress(@PathVariable UUID id, @RequestBody Address address) {
+    public AddressRequestDTO updateAddress(@PathVariable UUID id,@Valid @RequestBody Address address) {
         address.setId(id);
         return addressService.save(address);
     }

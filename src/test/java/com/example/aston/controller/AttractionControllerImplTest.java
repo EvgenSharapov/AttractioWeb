@@ -5,20 +5,18 @@ import com.example.aston.dto.AttractionRequestDTO;
 import com.example.aston.model.Address;
 import com.example.aston.model.Attraction;
 import com.example.aston.model.AttractionType;
-import com.example.aston.model.TicketInfo;
+import com.example.aston.repository.AddressRepository;
 import com.example.aston.service.attraction.AttractionServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -26,23 +24,23 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
+@WebMvcTest(controllers = AttractionControllerImpl.class)
 class AttractionControllerImplTest {
 
+    @Autowired
     private MockMvc mockMvc;
 
-    @Mock
+    @MockitoBean
     private AttractionServiceImpl attractionService;
 
-    @InjectMocks
-    private AttractionControllerImpl attractionController;
+    @MockitoBean
+    private AddressRepository addressRepository;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(attractionController).build();
-    }
+    @Autowired
+    private ObjectMapper objectMapper;
+
 
     private AttractionRequestDTO createAttractionRequestDTO() {
         return AttractionRequestDTO.builder()
@@ -54,10 +52,22 @@ class AttractionControllerImplTest {
 
     private Attraction createAttraction() {
         Attraction attraction = new Attraction();
+        Address address = createAddress();
         attraction.setName("Attraction");
         attraction.setDescription("Description");
         attraction.setType(AttractionType.GALLERY);
+        attraction.setAddress(address);
         return attraction;
+    }
+    private Address createAddress() {
+        UUID addressId = UUID.randomUUID();
+        Address address = new Address();
+        address.setBuilding(745);
+        address.setStreet("Angarsk street");
+        address.setCity("Moscow");
+        address.setRegion("Moscow region");
+        address.setId(addressId);
+        return address;
     }
 
 
@@ -94,12 +104,17 @@ class AttractionControllerImplTest {
 
     @Test
     void createAttraction_ReturnsCreatedAttraction() throws Exception {
-        AttractionRequestDTO attractionDTO = createAttractionRequestDTO();
+        Address address = createAddress();
+        UUID addressId = address.getId();
         Attraction attraction = createAttraction();
 
-        when(attractionService.save(any(Attraction.class))).thenReturn(attractionDTO);
+        AttractionRequestDTO attractionDTO = createAttractionRequestDTO();
+
+        when(addressRepository.findById(addressId)).thenReturn(Optional.of(address));
+        when(attractionService.save(any(Attraction.class),any(Address.class))).thenReturn(attractionDTO);
 
         mockMvc.perform(post("/api/attraction/create")
+                        .param("addressId", addressId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(attraction)))
                 .andExpect(status().isCreated())
@@ -107,7 +122,8 @@ class AttractionControllerImplTest {
                 .andExpect(jsonPath("$.description").value("Description"))
                 .andExpect(jsonPath("$.type").value("GALLERY"));
 
-        verify(attractionService, times(1)).save(any(Attraction.class));
+        verify(addressRepository, times(1)).findById(addressId);
+        verify(attractionService, times(1)).save(any(Attraction.class),any(Address.class));
     }
 
     @Test
@@ -115,10 +131,12 @@ class AttractionControllerImplTest {
         UUID id = UUID.randomUUID();
         AttractionRequestDTO attractionDTO = createAttractionRequestDTO();
         Attraction attraction = createAttraction();
+        Address address = createAddress();
+        UUID addressId = address.getId();
 
-        when(attractionService.save(any(Attraction.class))).thenReturn(attractionDTO);
+        when(attractionService.save(any(Attraction.class),any(Address.class))).thenReturn(attractionDTO);
 
-        mockMvc.perform(put("/api/attraction/{id}", id)
+        mockMvc.perform(put("/api/attraction/{id}/{addressId}", id, addressId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(attraction)))
                 .andExpect(status().isOk())
@@ -126,7 +144,7 @@ class AttractionControllerImplTest {
                 .andExpect(jsonPath("$.description").value("Description"))
                 .andExpect(jsonPath("$.type").value("GALLERY"));
 
-        verify(attractionService, times(1)).save(any(Attraction.class));
+        verify(attractionService, times(1)).save(any(Attraction.class),any(Address.class));
     }
 
     @Test

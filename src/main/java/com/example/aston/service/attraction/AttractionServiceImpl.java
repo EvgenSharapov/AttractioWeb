@@ -3,8 +3,11 @@ package com.example.aston.service.attraction;
 import com.example.aston.dto.AttractionRequestDTO;
 import com.example.aston.handler.exeptions.AttractionNotFoundException;
 import com.example.aston.mapper.AttractionMapper;
+import com.example.aston.model.Address;
 import com.example.aston.model.Attraction;
 import com.example.aston.repository.AttractionRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +23,7 @@ public class AttractionServiceImpl implements AttractionService {
 
     private final AttractionRepository attractionRepo;
     private final AttractionMapper attractionMapper;
+    private final EntityManager entityManager;
 
 
     @Override
@@ -42,8 +46,12 @@ public class AttractionServiceImpl implements AttractionService {
     }
 
     @Override
-    public AttractionRequestDTO save(@Valid Attraction attraction) {
+    @Transactional
+    public AttractionRequestDTO save(@Valid Attraction attraction, Address address) {
         log.debug("Save Attraction: {}", attraction);
+        address = entityManager.merge(address);
+
+        attraction.setAddress(address);
         attractionRepo.save(attraction);
 
         return attractionMapper.mapToAttractionRequestDTO(attraction);

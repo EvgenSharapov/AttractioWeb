@@ -39,7 +39,6 @@ public class Attraction {
     @NotNull(message = "The type must be selected")
     private AttractionType type;
 
-    @NotNull(message = "Address cannot be null")
     @ManyToOne(cascade = CascadeType.ALL)
     @JsonIgnore
     @JoinColumn(name = "address_id", foreignKey = @ForeignKey(name = "fk_attraction_address"))

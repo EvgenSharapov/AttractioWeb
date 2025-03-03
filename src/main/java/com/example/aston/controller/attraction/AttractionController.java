@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+@RestController
 @RequestMapping("/api/attraction")
 public interface AttractionController {
 
@@ -17,10 +18,10 @@ public interface AttractionController {
     AttractionRequestDTO getAttractionById(@PathVariable UUID id);
 
     @PostMapping("/create")
-    AttractionRequestDTO createAttraction(@RequestBody Attraction attraction);
+    AttractionRequestDTO createAttraction(@RequestBody Attraction attraction,@RequestParam UUID addressId);
 
-    @PutMapping("/{id}")
-    AttractionRequestDTO updateAttraction(@PathVariable UUID id, @RequestBody Attraction attraction) ;
+    @PutMapping("/{id}/{addressId}")
+    AttractionRequestDTO updateAttraction(@RequestBody Attraction attraction,@PathVariable UUID id,@PathVariable UUID addressId ) ;
 
     @DeleteMapping("/{id}")
     void deleteAttraction(@PathVariable UUID id);

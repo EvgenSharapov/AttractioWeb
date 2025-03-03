@@ -1,6 +1,7 @@
 package com.example.aston.service.attraction;
 
 import com.example.aston.dto.AttractionRequestDTO;
+import com.example.aston.model.Address;
 import com.example.aston.model.Attraction;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public interface AttractionService {
 
     List<AttractionRequestDTO> getAll();
 
-    AttractionRequestDTO save(Attraction attraction);
+    AttractionRequestDTO save(Attraction attraction, Address address);
 
     void delete(UUID id);
 }

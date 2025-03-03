@@ -3,6 +3,7 @@ package com.example.aston.controller.travel_service;
 import com.example.aston.dto.TravelServiceRequestDTO;
 import com.example.aston.model.TravelService;
 import com.example.aston.service.travel_service.TravelServiceServiceImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -29,12 +30,12 @@ public class TravelServiceControllerImpl implements TravelServiceController{
 
     @Override
     @ResponseStatus(HttpStatus.CREATED)
-    public TravelServiceRequestDTO createTravelService(TravelService service) {
+    public TravelServiceRequestDTO createTravelService(@Valid TravelService service) {
         return travelService.save(service);
     }
 
     @Override
-    public TravelServiceRequestDTO updateTravelService(UUID id, TravelService service) {
+    public TravelServiceRequestDTO updateTravelService(UUID id,@Valid TravelService service) {
         service.setId(id);
         return travelService.save(service);
     }

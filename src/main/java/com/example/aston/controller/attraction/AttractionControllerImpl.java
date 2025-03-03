@@ -1,14 +1,18 @@
 package com.example.aston.controller.attraction;
 
 import com.example.aston.dto.AttractionRequestDTO;
+import com.example.aston.handler.exeptions.AddressNotFoundException;
+import com.example.aston.model.Address;
 import com.example.aston.model.Attraction;
+import com.example.aston.repository.AddressRepository;
+import com.example.aston.service.address.AddressServiceImpl;
 import com.example.aston.service.attraction.AttractionServiceImpl;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
@@ -17,6 +21,8 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 public class AttractionControllerImpl implements AttractionController {
+
+    private final AddressRepository addressRepository;
 
     private final AttractionServiceImpl attractionService;
 
@@ -33,14 +39,21 @@ public class AttractionControllerImpl implements AttractionController {
 
     @Override
     @ResponseStatus(HttpStatus.CREATED)
-    public AttractionRequestDTO createAttraction(Attraction attraction) {
-        return attractionService.save(attraction);
+
+    public AttractionRequestDTO createAttraction(@Valid Attraction attraction,@RequestParam UUID addressId) {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new AddressNotFoundException(addressId));
+
+        return attractionService.save(attraction,address);
     }
 
     @Override
-    public AttractionRequestDTO updateAttraction(UUID id,Attraction attraction) {
+    public AttractionRequestDTO updateAttraction(@Valid Attraction attraction, UUID id,UUID addressId) {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new AddressNotFoundException(addressId));
         attraction.setId(id);
-        return attractionService.save(attraction);
+        attraction.setAddress(address);
+        return attractionService.save(attraction,address);
     }
 
     @Override

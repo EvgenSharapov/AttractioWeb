@@ -134,7 +134,8 @@ class AttractionControllerImplTest {
         Address address = createAddress();
         UUID addressId = address.getId();
 
-        when(attractionService.save(any(Attraction.class),any(Address.class))).thenReturn(attractionDTO);
+        when(addressRepository.findById(addressId)).thenReturn(Optional.of(address));
+        when(attractionService.save(any(Attraction.class), any(Address.class))).thenReturn(attractionDTO);
 
         mockMvc.perform(put("/api/attraction/{id}/{addressId}", id, addressId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -144,7 +145,8 @@ class AttractionControllerImplTest {
                 .andExpect(jsonPath("$.description").value("Description"))
                 .andExpect(jsonPath("$.type").value("GALLERY"));
 
-        verify(attractionService, times(1)).save(any(Attraction.class),any(Address.class));
+        verify(addressRepository, times(1)).findById(addressId);
+        verify(attractionService, times(1)).save(any(Attraction.class), any(Address.class));
     }
 
     @Test
